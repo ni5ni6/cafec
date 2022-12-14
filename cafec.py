@@ -147,7 +147,7 @@ device_ids = [
 
 url = 'https://api.decazavazduh.rs/api/devices/%s/data/aggregate/?interval=24h&from_date=%s&until_date=%s'
 
-csvheader = ['device_id', 'date', 'has_results']
+csvheader = ['device_id', 'date', 'pm1', 'pm2_5', 'pm10']
 
 headers = {
   'Accept': 'application/json',
@@ -164,11 +164,13 @@ def truncDate(iso_date):
 for device_id in device_ids:
   response = requests.request("GET", url % (device_id, from_date, until_date), headers=headers, data={})
   myjson = response.json()
-  if(myjson['results'] == []):
-    ourdata.append([device_id])
+  # if(myjson['results'] == []):
+  #   ourdata.append([device_id])
 
   for x in myjson['results']:
-    ourdata.append([device_id, truncDate(x['time']), 1])
+    ourdata.append([device_id, truncDate(x['time']), x['pm1'], x['pm2_5'], x['pm10']])
+  
+  print('.', end='')
 
 
 with open('2022-11.csv', 'w', encoding='UTF8', newline='') as f:
